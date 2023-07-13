@@ -14,7 +14,7 @@ namespace MMCCCore.DataClasses.MC
         public MCVersionJsonArgsInfo Arguments { get; set; }
 
         [JsonProperty("assetIndex")]
-        public MCFileInfo AssetIndex { get; set; }
+        public MCVersionJsonAssetIndexInfo AssetIndex { get; set; }
 
         [JsonProperty("assets", NullValueHandling = NullValueHandling.Ignore)]
         public string Assets { get; set; }
@@ -53,13 +53,22 @@ namespace MMCCCore.DataClasses.MC
         public string Type { get; set; }
     }
 
+    public class MCVersionJsonAssetIndexInfo : MCFileInfo
+    {
+        [JsonProperty("id")]
+        public string ID { get; set; }
+
+        [JsonProperty("totalSize")]
+        public long TotalSize { get; set; }
+    }
+
     public class MCVersionJsonArgsInfo
     {
         [JsonProperty("game")]
-        public List<JObject> Game { get; set; } = new List<JObject>();
+        public List<JToken> Game { get; set; } = new List<JToken>();
 
         [JsonProperty("jvm")]
-        public List<JObject> Jvm { get; set; } = new List<JObject>();
+        public List<JToken> Jvm { get; set; } = new List<JToken>();
     }
 
     public class MCRecommentedJavaInfo

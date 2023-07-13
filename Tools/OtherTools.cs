@@ -36,5 +36,20 @@ namespace MMCCCore.Tools
                     return null;
             }
         }
+
+        public static string FormatPath(string path) => path.Replace('/', Path.DirectorySeparatorChar)
+            .Replace('\\', Path.DirectorySeparatorChar);
+
+        public static void CreateDirs(string path)
+        {
+            string cpath = FormatPath(path).TrimEnd(Path.DirectorySeparatorChar);
+            string[] sarray = cpath.Split(Path.DirectorySeparatorChar);
+            string currpath = sarray[0];
+            for(int i=1;i<sarray.Length;i++)
+            {
+                currpath = Path.Combine(currpath, sarray[i]);
+                if (!Directory.Exists(currpath)) Directory.CreateDirectory(currpath);
+            }
+        }
     }
 }
