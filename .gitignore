@@ -1,3 +1,7 @@
 .vs
 bin/
 obj/
+Class1.cs
+Demo/bin/
+Demo/obj/
+.vscode/

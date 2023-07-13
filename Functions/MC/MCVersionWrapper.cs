@@ -41,6 +41,7 @@ namespace MMCCCore.Functions.MC
                     }
                 }
             }
+            return MCModAPIType.Raw;
         }
     }
 }
