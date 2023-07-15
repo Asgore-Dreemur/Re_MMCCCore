@@ -27,7 +27,7 @@ namespace MMCCCore.Tools
 
         private int AllFileCount { get; set; } = 0;
 
-        public MultiFileDownloader() {}
+        public MultiFileDownloader() { }
 
         /// <summary>
         /// 初始化下载器
@@ -50,7 +50,7 @@ namespace MMCCCore.Tools
             this.AllFileCount = DownloadStack.Count;
             this.Downloaded = 0;
             LastDownloadResult = null;
-            for (int i = 0;i < TheadCount; i++)
+            for (int i = 0; i < TheadCount; i++)
             {
                 Thread thread = new Thread(new ParameterizedThreadStart(DownloadThread));
                 thread.Start(DownloadStack);
@@ -88,7 +88,7 @@ namespace MMCCCore.Tools
 
         private async Task RunOnProgressChanged()
         {
-            lock(locker3)OnProgressChanged?.Invoke(this, (Downloaded, AllFileCount));
+            lock (locker3) OnProgressChanged?.Invoke(this, (Downloaded, AllFileCount));
         }
 
 
@@ -98,7 +98,7 @@ namespace MMCCCore.Tools
         /// <returns>下载结果，若下载中出现错误，则返回最后一个错误的下载结果</returns>
         public DownloadResult WaitForDownloadComplete()
         {
-            foreach(var item in ThreadPool)
+            foreach (var item in ThreadPool)
             {
                 item.Join();
             }
