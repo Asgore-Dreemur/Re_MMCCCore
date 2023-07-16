@@ -1,8 +1,11 @@
-﻿using MMCCCore.DataClasses.MC;
+﻿using MMCCCore.DataClasses.Downloader;
+using MMCCCore.DataClasses.MC;
 using MMCCCore.Tools;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -12,8 +15,10 @@ namespace MMCCCore.Functions.MC
     /// <summary>
     /// MC支持库方法封装
     /// </summary>
-    public static class MCLibraryWrapper
+    public class MCLibraryManager
     {
+
+
         /// <summary>
         /// 从版本json中获取全部支持库信息
         /// </summary>
@@ -22,10 +27,10 @@ namespace MMCCCore.Functions.MC
         public static List<MCLibraryInfo> GetAllLibrariesFromJson(MCVersionJsonInfo info)
         {
             List<MCLibraryInfo> llist = new List<MCLibraryInfo>();
-            foreach(var item in info.Libraries)
+            foreach (var item in info.Libraries)
             {
                 MCLibraryInfo linfo = new MCLibraryInfo { Name = item.Name, RawJson = item, isEnable = true };
-                if(item.Downloads.Artifact != null)
+                if (item.Downloads != null && item.Downloads.Artifact != null)
                 {
                     linfo.Path = item.Downloads.Artifact.Path;
                     linfo.Url = item.Downloads.Artifact.Url;
@@ -33,8 +38,9 @@ namespace MMCCCore.Functions.MC
                     linfo.Sha1 = item.Downloads.Artifact.Sha1;
                     linfo.isNative = false;
                     if (linfo.RawJson.Rules != null) linfo.isEnable = IsEnableTheLibraryByRules(item);
+                    llist.Add(linfo);
                 }
-                if (item.Downloads.Classifiters != null)
+                if (item.Downloads != null && item.Downloads.Classifiters != null)
                 {
                     MCLibraryInfo cinfo = new MCLibraryInfo { Name = item.Name, RawJson = item, isEnable = true, isNative = true };
                     if (IsTheSystemNeedTheNative(item))
@@ -44,19 +50,24 @@ namespace MMCCCore.Functions.MC
                         cinfo.Size = file.Size;
                         cinfo.Sha1 = file.Sha1;
                         cinfo.Url = file.Url;
-                        if (cinfo.RawJson.Rules != null) cinfo.isEnable = IsEnableTheLibraryByRules(item);
+                        if (item.Rules != null) cinfo.isEnable = IsEnableTheLibraryByRules(item);
                         llist.Add(cinfo);
                     }
                 }
-                if(item.Downloads.Artifact != null && item.Downloads.Classifiters != null)
+                if (item.Downloads == null)
                 {
                     linfo.isEnable = item.ClientReq.HasValue ? item.ClientReq.Value : true;
                     if (!string.IsNullOrEmpty(item.Name)) linfo.Path = GetMavenPathFromName(item.Name);
+                    linfo.Url = item.Url;
+                    llist.Add(linfo);
                 }
-                llist.Add(linfo);
             }
             return llist;
         }
+
+
+
+
 
         /// <summary>
         /// 检查native是否被该系统需要
@@ -91,9 +102,9 @@ namespace MMCCCore.Functions.MC
                 {"linux", false },
                 {"osx", false }
             };
-            foreach(var item in info.Rules)
+            foreach (var item in info.Rules)
             {
-                if(item.OS == default)
+                if (item.OS == default || !item.OS.ContainsKey("name"))
                 {
                     if (item.Action == "allow") systems["windows"] = systems["linux"] = systems["osx"] = true;
                     else systems["windows"] = systems["linux"] = systems["osx"] = false;
@@ -104,7 +115,8 @@ namespace MMCCCore.Functions.MC
                     if (item.Action == "allow")
                     {
                         systems[targetName] = true;
-                    }else systems[targetName] = false;
+                    }
+                    else systems[targetName] = false;
                 }
             }
             return systems[OtherTools.GetSystemPlatformLikesMC()];

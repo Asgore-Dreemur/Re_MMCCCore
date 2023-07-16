@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MMCCCore.Functions.MC
 {
-    public class MCAssetsManager
+    public class MCAssetsDownloader
     {
         public event EventHandler<double> OnProgressChanged;
 
@@ -20,10 +20,8 @@ namespace MMCCCore.Functions.MC
         /// </summary>
         /// <param name="gameRoot">游戏根目录</param>
         /// <param name="info">版本json</param>
-        /// <param name="ThreadCount">最大线程数</param>
-        /// <param name="TryCount">尝试次数</param>
         /// <returns>执行结果</returns>
-        public async Task<InstallResult> DownloadAssets(string gameRoot, MCVersionJsonInfo info, int ThreadCount = 4, int TryCount = 4)
+        public async Task<InstallResult> DownloadAssets(string gameRoot, MCVersionJsonInfo info)
         {
             try
             {
@@ -33,21 +31,20 @@ namespace MMCCCore.Functions.MC
                 OtherTools.CreateDirs(objectsPath);
                 string indexContext = "";
                 string indexFilePath = Path.Combine(indexPath, info.AssetIndex.ID + ".json");
-                if (SHA1Tools.CompareSHA1(indexFilePath, info.AssetIndex.Sha1))
+                if (SHA1Tools.CompareSHA1(indexFilePath, info.AssetIndex.Sha1)) //如果已经存在且sha1一致
                 {
-                    indexContext = File.ReadAllText(indexFilePath);
+                    indexContext = File.ReadAllText(indexFilePath); //直接读取
                 }
                 else
                 {
                     string indexUrl = info.AssetIndex.Url;
-                    indexContext = await (await HttpTools.HttpGetTaskAsync(indexUrl)).Content.ReadAsStringAsync();
+                    indexContext = await (await HttpTools.HttpGetTaskAsync(indexUrl)).Content.ReadAsStringAsync(); //下载
+                    File.WriteAllText(indexFilePath, indexContext);
                 }
-                File.WriteAllText(indexFilePath, indexContext);
                 JObject indexObj = JObject.Parse(indexContext);
                 Stack<DownloadTaskInfo> stack = new Stack<DownloadTaskInfo>();
                 foreach(var item in indexObj["objects"].Values())
                 {
-                    var pair = item.ToObject<JObject>();
                     string assetHash = item["hash"].ToString();
                     string assetHash2B = assetHash.Substring(0, 2);
                     string assetUrl = $"https://{APIManager.Current.Asset}/{assetHash2B}/{assetHash}";
@@ -58,11 +55,11 @@ namespace MMCCCore.Functions.MC
                         SavePath = assetPath,
                         Url = assetUrl,
                         Sha1 = assetHash,
-                        TryCount = TryCount
+                        TryCount = DownloadConfigs.ErrorTryCount
                     };
                     stack.Push(dinfo);
                 }
-                MultiFileDownloader downloader = new MultiFileDownloader(stack, ThreadCount);
+                MultiFileDownloader downloader = new MultiFileDownloader(stack, DownloadConfigs.ThreadCount);
                 downloader.OnProgressChanged += Downloader_OnProgressChanged;
                 downloader.StartDownload();
                 var result = downloader.WaitForDownloadComplete();

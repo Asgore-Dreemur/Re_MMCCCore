@@ -116,6 +116,9 @@ namespace MMCCCore.DataClasses.MC
 
         [JsonProperty("clientreq", NullValueHandling = NullValueHandling.Ignore)]
         public bool? ClientReq { get; set; }
+
+        [JsonProperty("url", NullValueHandling = NullValueHandling.Ignore)]
+        public string Url { get; set; }
     }
 
     public class MCLibraryDownloadsInfo

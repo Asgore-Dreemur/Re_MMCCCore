@@ -74,5 +74,14 @@ namespace MMCCCore.DataClasses.MC
         };
 
         public static DownloadAPIInfo Current { get; set; } = Bmclapi;
+
+        
+    }
+
+    public static class DownloadConfigs
+    {
+        public static int ThreadCount { get; set; } //全局变量 最大线程数
+
+        public static int ErrorTryCount { get; set; } //全局变量 下载错误重试次数
     }
 }

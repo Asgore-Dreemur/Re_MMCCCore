@@ -12,7 +12,7 @@ namespace MMCCCore.Functions.MC
     /// <summary>
     /// MC版本一些方法的封装
     /// </summary>
-    public static class MCVersionWrapper
+    public static class MCVersionManager
     {
         /// <summary>
         /// 获取所有的MC版本

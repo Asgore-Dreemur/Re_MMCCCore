@@ -4,6 +4,8 @@ using MMCCCore.Tools;
 using MMCCCore.DataClasses.Downloader;
 using MMCCCore.DataClasses.MC;
 using Newtonsoft.Json;
+using MMCCCore.DataClasses;
+using MMCCCore.Functions.Auth;
 
 namespace Program
 {
@@ -11,11 +13,26 @@ namespace Program
     {
         public static void Main(string[] args)
         {
-            MCVersionJsonInfo info = JsonConvert.DeserializeObject<MCVersionJsonInfo>(File.ReadAllText("F:\\MCGame\\.minecraft\\versions\\1.19.2-Fabric 0.14.21\\1.19.2-Fabric 0.14.21.json"));
-            MCAssetsManager manager = new MCAssetsManager();
-            manager.OnProgressChanged += Manager_OnProgressChanged;
-            var result = manager.DownloadAssets("F:\\MCGame\\.minecraft", info, 32).GetAwaiter().GetResult();
-            Console.WriteLine(result);
+            DownloadConfigs.ErrorTryCount = 4;
+            DownloadConfigs.ThreadCount = 4;
+            LocalLang.Current = LocalLang.ZH_CN;
+            LocalLang.CurrentLang = "zh-CN";
+            MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator();
+            authenticator.OnProgressChanged += Authenticator_OnProgressChanged;
+            var dfresult = authenticator.StartDeviceFlowTaskAsync().GetAwaiter().GetResult();
+            Console.WriteLine($"code:{dfresult.UserCode} url:{dfresult.VerificationUri}  message:{dfresult.Message}");
+            var oauthresult = authenticator.WaitForUserCompleteRequest(dfresult).GetAwaiter().GetResult();
+            if (oauthresult != null)
+            {
+                var account = authenticator.AuthenticateTaskAsync(oauthresult).GetAwaiter().GetResult();
+                Console.WriteLine(account);
+            }
+            else Console.WriteLine("Error");
+        }
+
+        private static void Authenticator_OnProgressChanged(object sender, (string, double) e)
+        {
+            Console.WriteLine($"status:{e.Item2}({e.Item1})");
         }
 
         private static void Manager_OnProgressChanged(object sender, double e)
