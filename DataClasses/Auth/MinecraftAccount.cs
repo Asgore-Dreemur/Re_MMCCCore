@@ -14,6 +14,8 @@ namespace MMCCCore.DataClasses.Auth
 
         public string AccessToken { get; set; }
 
+        public string ClientToken { get; set; }
+
         public string RefreshToken { get; set; }
 
         public Exception ErrorException { get; set; }

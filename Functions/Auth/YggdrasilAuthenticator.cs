@@ -35,16 +35,30 @@ namespace MMCCCore.Functions.Auth
         /// </summary>
         /// <param name="isRefresh">是否为刷新令牌</param>
         /// <returns>登录结果</returns>
-        public async Task<YAuthResult> AuthenticateTaskAsync(bool isRefresh)
+        public async Task<YggdrasilAccount> AuthenticateTaskAsync(bool isRefresh)
         {
-            string operation = isRefresh ? "authenticate" : "refresh";
-            string requestUrl = this.YggdrasilServerUrl.TrimEnd('/') + $"/authserver/{operation}";
-            JObject keyValuePairs = new JObject();
-            keyValuePairs["username"] = this.Username;
-            keyValuePairs["password"] = this.Password;
-            keyValuePairs["clientToken"] = this.ClientToken;
-            var rcontext = await HttpTools.HttpPostTaskAsync(requestUrl, "application/json", JsonConvert.SerializeObject(keyValuePairs));
-            return JsonConvert.DeserializeObject<YAuthResult>(await rcontext.Content.ReadAsStringAsync());
+            try
+            {
+                string operation = isRefresh ? "authenticate" : "refresh";
+                string requestUrl = this.YggdrasilServerUrl.TrimEnd('/') + $"/authserver/{operation}";
+                JObject keyValuePairs = new JObject();
+                keyValuePairs["username"] = this.Username;
+                keyValuePairs["password"] = this.Password;
+                keyValuePairs["clientToken"] = this.ClientToken;
+                var rcontext = await HttpTools.HttpPostTaskAsync(requestUrl, "application/json", JsonConvert.SerializeObject(keyValuePairs));
+                var result = JsonConvert.DeserializeObject<YAuthResult>(await rcontext.Content.ReadAsStringAsync());
+                return new YggdrasilAccount
+                {
+                    AccessToken = result.AccessToken,
+                    ClientToken = this.ClientToken,
+                    Name = result.AvailableProfiles[0].Name,
+                    UUID = result.AvailableProfiles[0].UUID,
+                    AvailableProfiles = result.AvailableProfiles
+                };
+            }catch(Exception e)
+            {
+                return new YggdrasilAccount { ErrorException = e };
+            }
         }
 
         /// <summary>
