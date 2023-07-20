@@ -27,6 +27,8 @@ namespace MMCCCore.DataClasses.MC
         public string FabricMeta { get; set; }
 
         public string FabricMaven { get; set; }
+
+        public string Optifine { get; set; }
     }
 
     public static class APIManager
@@ -42,7 +44,8 @@ namespace MMCCCore.DataClasses.MC
             Liteloader = "http://dl.liteloader.com/versions/versions.json",
             AuthLib = "authlib-injector.yushi.moe",
             FabricMaven = "maven.fabricmc.net",
-            FabricMeta = "meta.fabricmc.net"
+            FabricMeta = "meta.fabricmc.net",
+            Optifine = null
         };
 
         public static DownloadAPIInfo Bmclapi { get; } = new DownloadAPIInfo
@@ -56,7 +59,8 @@ namespace MMCCCore.DataClasses.MC
             Liteloader = "https://bmclapi.bangbang93.com/maven/com/mumfrey/liteloader/versions.json",
             AuthLib = "bmclapi2.bangbang93.com/mirrors/authlib-injector",
             FabricMaven = "bmclapi2.bangbang93.com/maven",
-            FabricMeta = "bmclapi2.bangbang93.com/fabric-meta"
+            FabricMeta = "bmclapi2.bangbang93.com/fabric-meta",
+            Optifine = "https://bmclapi2.bangbang93.com/optifine"
         };
 
         public static DownloadAPIInfo Mcbbs { get; } = new DownloadAPIInfo
@@ -70,7 +74,8 @@ namespace MMCCCore.DataClasses.MC
             Liteloader = "https://download.mcbbs.net/maven/com/mumfrey/liteloader/versions.json",
             AuthLib = "download.mcbbs.net/mirrors/authlib-injector",
             FabricMaven = "download.mcbbs.net/maven",
-            FabricMeta = "download.mcbbs.net/fabric-meta"
+            FabricMeta = "download.mcbbs.net/fabric-meta",
+            Optifine = "https://download.mcbbs.net/optifine"
         };
 
         public static DownloadAPIInfo Current { get; set; } = Bmclapi;

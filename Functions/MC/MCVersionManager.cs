@@ -43,5 +43,33 @@ namespace MMCCCore.Functions.MC
             }
             return MCModAPIType.Raw;
         }
+
+        /// <summary>
+        /// 检查给定版本是否存在
+        /// </summary>
+        /// <param name="gameRoot">游戏根目录</param>
+        /// <param name="versionName">版本名</param>
+        /// <returns></returns>
+        public static bool VersionExists(string gameRoot, string versionName)
+        {
+            try
+            {
+                string versionPath = Path.Combine(gameRoot, "versions", versionName);
+                if (Directory.Exists(versionPath))
+                {
+                    string jsonPath = Path.Combine(versionPath, versionName + ".json");
+                    if (File.Exists(jsonPath))
+                    {
+                        var info = JsonConvert.DeserializeObject<MCVersionJsonInfo>(File.ReadAllText(jsonPath));
+                        if (info != null)
+                        {
+                            if (!string.IsNullOrEmpty(info.VersionName)) return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            catch (Exception) { return false; }
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace MMCCCore.Functions.MC
         /// <param name="gameRoot">游戏根目录</param>
         /// <param name="info">版本json</param>
         /// <returns>执行结果</returns>
-        public async Task<InstallResult> CompleteLibraries(string gameRoot, MCVersionJsonInfo info)
+        public async Task<InstallResult> CompleteLibrariesTaskAsync(string gameRoot, MCVersionJsonInfo info)
         {
             try
             {

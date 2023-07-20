@@ -6,6 +6,7 @@ using MMCCCore.DataClasses.MC;
 using Newtonsoft.Json;
 using MMCCCore.DataClasses;
 using MMCCCore.Functions.Auth;
+using MMCCCore.Functions.ModAPI;
 
 namespace Program
 {
@@ -17,17 +18,22 @@ namespace Program
             DownloadConfigs.ThreadCount = 4;
             LocalLang.Current = LocalLang.ZH_CN;
             LocalLang.CurrentLang = "zh-CN";
-            MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator();
-            authenticator.OnProgressChanged += Authenticator_OnProgressChanged;
-            var dfresult = authenticator.StartDeviceFlowTaskAsync().GetAwaiter().GetResult();
-            Console.WriteLine($"code:{dfresult.UserCode} url:{dfresult.VerificationUri}  message:{dfresult.Message}");
-            var oauthresult = authenticator.WaitForUserCompleteRequest(dfresult).GetAwaiter().GetResult();
-            if (oauthresult != null)
+            var info = OptifineManager.GetAllOptifineFromMCVersion("1.16.5").Result[0];
+            OptifineInstaller installer = new OptifineInstaller()
             {
-                var account = authenticator.AuthenticateTaskAsync(oauthresult).GetAwaiter().GetResult();
-                Console.WriteLine(account);
-            }
-            else Console.WriteLine("Error");
+                GameRoot = "F:\\MCGame\\.minecraft",
+                JavaPath = "java",
+                InstallInfo = info,
+                VersionName = "1.16.5optifineTest2"
+            };
+            installer.ProgressChanged += Installer_ProgressChanged;
+            var result = installer.InstallTaskAsync().Result;
+            Console.WriteLine(result);
+        }
+
+        private static void Installer_ProgressChanged(object sender, (string, double) e)
+        {
+            Console.WriteLine($"status:{e.Item2}({e.Item1})");
         }
 
         private static void Authenticator_OnProgressChanged(object sender, (string, double) e)

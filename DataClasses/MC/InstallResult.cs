@@ -13,5 +13,7 @@ namespace MMCCCore.DataClasses.MC
         public string Message { get; set; }
 
         public Exception ErrorException { get; set; }
+
+        public object OtherInfo { get; set; }
     }
 }

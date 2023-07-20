@@ -13,14 +13,14 @@ namespace MMCCCore.DataClasses.MC
         [JsonProperty("arguments", NullValueHandling = NullValueHandling.Ignore)]
         public MCVersionJsonArgsInfo Arguments { get; set; }
 
-        [JsonProperty("assetIndex")]
+        [JsonProperty("assetIndex", NullValueHandling = NullValueHandling.Ignore)]
         public MCVersionJsonAssetIndexInfo AssetIndex { get; set; }
 
         [JsonProperty("assets", NullValueHandling = NullValueHandling.Ignore)]
         public string Assets { get; set; }
 
-        [JsonProperty("downloads")]
-        public Dictionary<string, MCFileInfo> Downloads { get; set; } = new Dictionary<string, MCFileInfo>();
+        [JsonProperty("downloads", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, MCFileInfo> Downloads { get; set; }
 
         [JsonProperty("id")]
         public string VersionName { get; set; }
@@ -28,19 +28,22 @@ namespace MMCCCore.DataClasses.MC
         [JsonProperty("javaVersion", NullValueHandling = NullValueHandling.Ignore)]
         public MCRecommentedJavaInfo JavaVersion { get; set; }
 
+        [JsonProperty("inheritsFrom", NullValueHandling = NullValueHandling.Ignore)]
+        public string InheritsFrom { get; set; }
+
         [JsonProperty("libraries")]
         public List<MCVersionJsonLibraryInfo> Libraries { get; set; } = new List<MCVersionJsonLibraryInfo>();
 
         [JsonProperty("logging", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, MCVersionJsonLoggingInfo> Logging { get; set; } = new Dictionary<string, MCVersionJsonLoggingInfo>();
+        public Dictionary<string, MCVersionJsonLoggingInfo> Logging { get; set; }
 
         [JsonProperty("mainClass")]
         public string MainClass { get; set; }
 
-        [JsonProperty("minecraftArguments")]
+        [JsonProperty("minecraftArguments", NullValueHandling = NullValueHandling.Ignore)]
         public string MinecraftArguments { get; set; }
 
-        [JsonProperty("minimumLauncherVersion")]
+        [JsonProperty("minimumLauncherVersion",NullValueHandling = NullValueHandling.Ignore)]
         public int MinimumLauncherVersion { get; set; }
 
         [JsonProperty("releaseTime")]
